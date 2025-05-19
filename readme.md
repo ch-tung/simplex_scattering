@@ -1,6 +1,6 @@
 # form_factor.py
 
-This module provides robust numerical routines for computing the **scattering form factor** $ F(\mathbf{q}) \) and intensity \( I(\mathbf{q}) = |F(\mathbf{q})|^2 $ of **arbitrary polyhedral shapes** represented as **tetrahedral meshes**.
+This module provides robust numerical routines for computing the **scattering form factor** $F(\mathbf{q}) \) and intensity \( I(\mathbf{q}) = |F(\mathbf{q})|^2$ of **arbitrary polyhedral shapes** represented as **tetrahedral meshes**.
 
 It combines an **analytic formula** for orthogonal tetrahedra (from Tianjuan Yang et al.) with an **adaptive subdivision pipeline** to avoid numerical singularities.
 
@@ -25,7 +25,7 @@ Based on:
 > **Tianjuan Yang et al.**, *J. Appl. Cryst.* 55, 1432–1440 (2022)  
 > DOI: [10.1107/S160057672201130X](https://doi.org/10.1107/S160057672201130X)
 
-Given three edge vectors $ \mathbf{V}_1, \mathbf{V}_2, \mathbf{V}_3 $ of a tetrahedron, the form factor is expressed in closed form by integrating the complex exponential over the tetrahedral volume:
+Given three edge vectors $\mathbf{V}_1, \mathbf{V}_2, \mathbf{V}_3$ of a tetrahedron, the form factor is expressed in closed form by integrating the complex exponential over the tetrahedral volume:
 
 $$
 F(\mathbf{q}) = \int_{\text{tetrahedron}} \rho(\mathbf{r}) \, e^{i \mathbf{q} \cdot \mathbf{r}} \, d\mathbf{r}
