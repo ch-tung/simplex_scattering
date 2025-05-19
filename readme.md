@@ -2,7 +2,7 @@
 
 This module provides robust numerical routines for computing the **scattering form factor** \( F(\mathbf{q}) \) and intensity \( I(\mathbf{q}) = |F(\mathbf{q})|^2 \) of **arbitrary polyhedral shapes** represented as **tetrahedral meshes**.
 
-It combines an **analytic formula** for orthogonal tetrahedra (from Tianjuan Yang et al.) with a novel **adaptive subdivision pipeline** to avoid numerical singularities.
+It combines an **analytic formula** for orthogonal tetrahedra (from Tianjuan Yang et al.) with an **adaptive subdivision pipeline** to avoid numerical singularities.
 
 ---
 
