@@ -254,6 +254,80 @@ def adaptive_formfactor(V1, V2, V3, qx, qy, qz, r0, DENSITY, det_T, depth=0, max
             1j * np.exp(1j * Q1) / (Q1 * (Q1 - Q2) * (Q1 - Q3)) -
             1j / (Q1 * Q2 * Q3)
         ) * phase
+        
+def jittered_formfactor(V1, V2, V3, qx, qy, qz, r0, DENSITY, det_T, jitter=1e-3):
+    """
+    Evaluate the scattering form factor of a tetrahedron using analytic expression.
+    If singularities are detected, jitter all four vertices once to regularize.
+
+    Parameters:
+    - V1, V2, V3: (3,) np.ndarray
+        Edge vectors from base vertex r0 defining the tetrahedron
+    - qx, qy, qz: (N,) flattened np.ndarrays
+        Wave vector components
+    - r0: (3,) np.ndarray
+        Base vertex position
+    - DENSITY: float
+        Scattering length density contrast
+    - det_T: float
+        Volume factor (determinant of edge matrix)
+    - jitter: float
+        Standard deviation of the perturbation added to each vertex if needed
+
+    Returns:
+    - F_q: complex ndarray
+        Scattering amplitude evaluated at all q points
+    """
+    # Project q onto edge vectors
+    Q1 = qx * V1[0] + qy * V1[1] + qz * V1[2]
+    Q2 = qx * V2[0] + qy * V2[1] + qz * V2[2]
+    Q3 = qx * V3[0] + qy * V3[1] + qz * V3[2]
+
+    eps = 1e-8
+    is_singular = (
+        np.any(np.abs(Q1) < eps) or
+        np.any(np.abs(Q2) < eps) or
+        np.any(np.abs(Q3) < eps) or
+        np.any(np.abs(Q1 - Q2) < eps) or
+        np.any(np.abs(Q1 - Q3) < eps) or
+        np.any(np.abs(Q2 - Q3) < eps)
+    )
+
+    if is_singular:
+        # Add random jitter to all vertices
+        noise = lambda: np.random.normal(scale=jitter, size=3)
+        r0_j = r0 + noise()
+        r1_j = r0 + V1 + noise()
+        r2_j = r0 + V2 + noise()
+        r3_j = r0 + V3 + noise()
+
+        V1_j = r1_j - r0_j
+        V2_j = r2_j - r0_j
+        V3_j = r3_j - r0_j
+        T_j = np.array([V1_j, V2_j, V3_j]).T
+        det_T_j = np.abs(np.linalg.det(T_j))
+
+        Q1 = qx * V1_j[0] + qy * V1_j[1] + qz * V1_j[2]
+        Q2 = qx * V2_j[0] + qy * V2_j[1] + qz * V2_j[2]
+        Q3 = qx * V3_j[0] + qy * V3_j[1] + qz * V3_j[2]
+        phase = np.exp(1j * (qx * r0_j[0] + qy * r0_j[1] + qz * r0_j[2]))
+
+        return DENSITY * det_T_j * (
+            1j * np.exp(1j * Q3) / (Q3 * (Q3 - Q2) * (Q3 - Q1)) +
+            1j * np.exp(1j * Q2) / (Q2 * (Q2 - Q1) * (Q2 - Q3)) +
+            1j * np.exp(1j * Q1) / (Q1 * (Q1 - Q2) * (Q1 - Q3)) -
+            1j / (Q1 * Q2 * Q3)
+        ) * phase
+
+    else:
+        phase = np.exp(1j * (qx * r0[0] + qy * r0[1] + qz * r0[2]))
+        return DENSITY * det_T * (
+            1j * np.exp(1j * Q3) / (Q3 * (Q3 - Q2) * (Q3 - Q1)) +
+            1j * np.exp(1j * Q2) / (Q2 * (Q2 - Q1) * (Q2 - Q3)) +
+            1j * np.exp(1j * Q1) / (Q1 * (Q1 - Q2) * (Q1 - Q3)) -
+            1j / (Q1 * Q2 * Q3)
+        ) * phase
+
 
 def scattering_function_adaptive(verts, tetrahedra, q_grid, DENSITY=1.0):
     """
@@ -291,6 +365,6 @@ def scattering_function_adaptive(verts, tetrahedra, q_grid, DENSITY=1.0):
     for i in range(tetrahedra.shape[0]):
         T = np.array([V1[i], V2[i], V3[i]]).T
         det_T = np.abs(np.linalg.det(T))
-        form_factors += adaptive_formfactor(V1[i], V2[i], V3[i], qx, qy, qz, r0[i], DENSITY, det_T)
+        form_factors += jittered_formfactor(V1[i], V2[i], V3[i], qx, qy, qz, r0[i], DENSITY, det_T)
 
     return np.abs(form_factors) ** 2
