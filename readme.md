@@ -53,3 +53,6 @@ To resolve numerical instabilities, we recursively **subdivide any tetrahedron**
    F_{\text{total}} = \sum_{i=1}^{N_{\text{sub}}} F_i(\mathbf{q})
    \]
 
+#### Important Note
+This method introduces a form of numerical regularization, the perturbed geometry is no longer an exact representation of the original polyhedral shape. However, the error appears negligible in practice based on comparison of 2D scattering spectra before and after adaptive subdivision.
+
