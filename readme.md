@@ -11,9 +11,10 @@ It combines an **analytic formula** for orthogonal tetrahedra (from Tianjuan Yan
 - `orthogonal_tetrahedra_formfactor(...)`: Analytic form factor for a tetrahedron.
 - `scattering_function_tetrahedron(...)`: Scattering from a tetrahedral mesh using the analytic method.
 
+- `jittered_formfactor(...)`: Random perturbation to the vertices of tetrahedra exhibiting singularities
 - `adaptive_formfactor(...)`: Recursive, subdivision-based evaluation to avoid singularities.
-- `scattering_function_adaptive(...)`: Mesh-level interface for adaptive evaluation.
 - `subdivide_tetrahedron(...)`: Perturbative 8-cell subdivision of a tetrahedron.
+- `scattering_function_adaptive(...)`: Mesh-level interface for adaptive evaluation.
 
 ---
 
